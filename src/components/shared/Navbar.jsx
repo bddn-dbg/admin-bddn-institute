@@ -25,6 +25,7 @@ export default function Navbar() {
   const navLinks = [
     { to: "/", label: "📊 Dashboard" },
     { to: "/batches", label: "📁 Batches" },
+    { to: "/resources", label: "📚 admin-resourses" },
   ];
 
   return (

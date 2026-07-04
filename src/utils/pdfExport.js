@@ -52,11 +52,17 @@ export const exportStudentPDF = async (student) => {
 
   // Receipt No & Date (right-aligned)
   doc.setFontSize(9);
-  doc.text(`Student ID: ${student.studentId}`, pageW - 15, 15, { align: "right" });
+  doc.text(`Student ID: ${student.studentId}`, pageW - 15, 12, { align: "right" });
+  if (student.admissionNo) {
+    doc.text(`Admission No: ${student.admissionNo}`, pageW - 15, 17, { align: "right" });
+  }
+  if (student.enrollmentNo) {
+    doc.text(`Enrollment No: ${student.enrollmentNo}`, pageW - 15, 22, { align: "right" });
+  }
   doc.text(
     `Date: ${new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}`,
     pageW - 15,
-    22,
+    27,
     { align: "right" }
   );
 
@@ -71,6 +77,9 @@ export const exportStudentPDF = async (student) => {
 
   const personalRows = [
     ["Student Name", student.name || "—"],
+    ["Date of Birth", student.dob ? formatDate(student.dob) : "—"],
+    ["Gender", student.gender || "—"],
+    ["Highest Qualification", student.highestQualification || "—"],
     ["Phone Number", student.phone || "—"],
     ["Alternate Phone", student.alternatePhone || "—"],
     ["Email Address", student.email || "—"],
@@ -91,13 +100,41 @@ export const exportStudentPDF = async (student) => {
     margin: { left: 15, right: 15 },
   });
 
-  // ── Course Details ──────────────────────────────────────────────────────────
+  // ── Parent / Guardian Details ───────────────────────────────────────────────
   const afterPersonal = doc.lastAutoTable.finalY + 8;
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(30, 41, 59);
-  doc.text("Course Details", 15, afterPersonal);
+  doc.text("Parent / Guardian Details", 15, afterPersonal);
   doc.line(15, afterPersonal + 2, pageW - 15, afterPersonal + 2);
+
+  const parentRows = [
+    ["Father's Name", student.fatherName || "—"],
+    ["Mother's Name", student.motherName || "—"],
+    ["Guardian Contact", student.guardianPhone || "—"],
+    ["Relationship", student.guardianRelationship || "—"],
+  ];
+
+  doc.autoTable({
+    startY: afterPersonal + 4,
+    head: [],
+    body: parentRows,
+    theme: "plain",
+    styles: { fontSize: 9, cellPadding: 2.5 },
+    columnStyles: {
+      0: { fontStyle: "bold", cellWidth: 55, textColor: [100, 116, 139] },
+      1: { textColor: [30, 41, 59] },
+    },
+    margin: { left: 15, right: 15 },
+  });
+
+  // ── Course Details ──────────────────────────────────────────────────────────
+  const afterParent = doc.lastAutoTable.finalY + 8;
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(30, 41, 59);
+  doc.text("Course Details", 15, afterParent);
+  doc.line(15, afterParent + 2, pageW - 15, afterParent + 2);
 
   const courseRows = [
     ["Course", student.course || "—"],
@@ -108,7 +145,7 @@ export const exportStudentPDF = async (student) => {
   ];
 
   doc.autoTable({
-    startY: afterPersonal + 4,
+    startY: afterParent + 4,
     head: [],
     body: courseRows,
     theme: "plain",

@@ -26,6 +26,15 @@ export const exportStudentsExcel = (students) => {
     "Installments Count": s.installments?.length || 0,
     "Created By": s.createdBy || "",
     "Created At": formatDate(s.createdAt),
+    "Admission No": s.admissionNo || "",
+    "Enrollment No": s.enrollmentNo || "",
+    "Date of Birth": s.dob ? formatDate(s.dob) : "",
+    Gender: s.gender || "",
+    "Highest Qualification": s.highestQualification || "",
+    "Father's Name": s.fatherName || "",
+    "Mother's Name": s.motherName || "",
+    "Guardian Phone": s.guardianPhone || "",
+    "Guardian Relationship": s.guardianRelationship || "",
   }));
 
   const ws = XLSX.utils.json_to_sheet(rows);
@@ -50,6 +59,15 @@ export const exportStudentsExcel = (students) => {
     { wch: 18 }, // Installments
     { wch: 22 }, // Created By
     { wch: 14 }, // Created At
+    { wch: 16 }, // Admission No
+    { wch: 16 }, // Enrollment No
+    { wch: 14 }, // Date of Birth
+    { wch: 12 }, // Gender
+    { wch: 22 }, // Highest Qualification
+    { wch: 22 }, // Father's Name
+    { wch: 22 }, // Mother's Name
+    { wch: 16 }, // Guardian Phone
+    { wch: 22 }, // Guardian Relationship
   ];
 
   const wb = XLSX.utils.book_new();
@@ -107,6 +125,15 @@ export const exportStudentsCSV = (students) => {
     "Installments Count": s.installments?.length || 0,
     "Created By": s.createdBy || "",
     "Created At": formatDate(s.createdAt),
+    "Admission No": s.admissionNo || "",
+    "Enrollment No": s.enrollmentNo || "",
+    "Date of Birth": s.dob ? formatDate(s.dob) : "",
+    Gender: s.gender || "",
+    "Highest Qualification": s.highestQualification || "",
+    "Father's Name": s.fatherName || "",
+    "Mother's Name": s.motherName || "",
+    "Guardian Phone": s.guardianPhone || "",
+    "Guardian Relationship": s.guardianRelationship || "",
   }));
 
   const ws = XLSX.utils.json_to_sheet(rows);

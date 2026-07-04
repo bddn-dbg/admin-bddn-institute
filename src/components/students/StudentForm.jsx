@@ -39,6 +39,15 @@ const DEFAULT_FORM = {
   paymentType: "Full Payment",
   fullPaymentDate: "",
   installments: [],
+  admissionNo: "",
+  enrollmentNo: "",
+  dob: "",
+  gender: "",
+  highestQualification: "",
+  fatherName: "",
+  motherName: "",
+  guardianPhone: "",
+  guardianRelationship: "",
 };
 
 export default function StudentForm({ student, batches = [], courses = [], durations = [], onSave, onCancel }) {
@@ -78,6 +87,9 @@ export default function StudentForm({ student, batches = [], courses = [], durat
         dateOfJoining: student.dateOfJoining?.toDate
           ? student.dateOfJoining.toDate().toISOString().slice(0, 10)
           : student.dateOfJoining || "",
+        dob: student.dob?.toDate
+          ? student.dob.toDate().toISOString().slice(0, 10)
+          : student.dob || "",
         fullPaymentDate: student.fullPaymentDate?.toDate
           ? student.fullPaymentDate.toDate().toISOString().slice(0, 10)
           : student.fullPaymentDate || "",
@@ -128,6 +140,10 @@ export default function StudentForm({ student, batches = [], courses = [], durat
     if (form.alternatePhone) {
       const altErr = validatePhone(form.alternatePhone);
       if (altErr) e.alternatePhone = "Alternate: " + altErr;
+    }
+    if (form.guardianPhone) {
+      const guardErr = validatePhone(form.guardianPhone);
+      if (guardErr) e.guardianPhone = guardErr;
     }
     const emailErr = validateEmail(form.email);
     if (emailErr) e.email = emailErr;
@@ -195,6 +211,15 @@ export default function StudentForm({ student, batches = [], courses = [], durat
         installments:
           form.paymentType === "Installment" ? form.installments : [],
         createdBy: user?.email || "unknown",
+        admissionNo: form.admissionNo ? form.admissionNo.trim() : "",
+        enrollmentNo: form.enrollmentNo ? form.enrollmentNo.trim() : "",
+        dob: form.dob || "",
+        gender: form.gender || "",
+        highestQualification: form.highestQualification ? form.highestQualification.trim() : "",
+        fatherName: form.fatherName ? form.fatherName.trim() : "",
+        motherName: form.motherName ? form.motherName.trim() : "",
+        guardianPhone: form.guardianPhone ? form.guardianPhone.trim() : "",
+        guardianRelationship: form.guardianRelationship ? form.guardianRelationship.trim() : "",
       };
 
       // Auto-calc payment status
@@ -217,6 +242,42 @@ export default function StudentForm({ student, batches = [], courses = [], durat
 
   return (
     <div>
+      {/* ── Admission Details ─────────────────────────────────── */}
+      <div className="form-section">
+        <p className="form-section-title">📝 Admission Details</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Admission No. */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-admission-no">
+              Admission No.
+            </label>
+            <input
+              id="f-admission-no"
+              type="text"
+              className="field-input"
+              placeholder="Enter Admission Number"
+              value={form.admissionNo || ""}
+              onChange={(e) => set("admissionNo", e.target.value)}
+            />
+          </div>
+
+          {/* Enrollment No. */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-enrollment-no">
+              Enrollment No.
+            </label>
+            <input
+              id="f-enrollment-no"
+              type="text"
+              className="field-input"
+              placeholder="Enter Enrollment Number"
+              value={form.enrollmentNo || ""}
+              onChange={(e) => set("enrollmentNo", e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* ── Personal Details ─────────────────────────────────── */}
       <div className="form-section">
         <p className="form-section-title">👤 Personal Details</p>
@@ -271,6 +332,38 @@ export default function StudentForm({ student, batches = [], courses = [], durat
             {errors.alternatePhone && <p className="field-error">{errors.alternatePhone}</p>}
           </div>
 
+          {/* Date of Birth */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-dob">
+              Date of Birth <span className="text-slate-400 font-normal text-xs">(DD/MM/YYYY)</span>
+            </label>
+            <input
+              id="f-dob"
+              type="date"
+              className="field-input"
+              value={form.dob || ""}
+              onChange={(e) => set("dob", e.target.value)}
+            />
+          </div>
+
+          {/* Gender */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-gender">
+              Gender
+            </label>
+            <select
+              id="f-gender"
+              className="field-select"
+              value={form.gender || ""}
+              onChange={(e) => set("gender", e.target.value)}
+            >
+              <option value="">— Select Gender —</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
           {/* Email */}
           <div className="field-group sm:col-span-2">
             <label className="field-label" htmlFor="f-email">
@@ -311,6 +404,21 @@ export default function StudentForm({ student, batches = [], courses = [], durat
               </button>
             </div>
             {errors.aadhaar && <p className="field-error">{errors.aadhaar}</p>}
+          </div>
+
+          {/* Highest Qualification */}
+          <div className="field-group sm:col-span-2">
+            <label className="field-label" htmlFor="f-highest-qualification">
+              Highest Qualification
+            </label>
+            <input
+              id="f-highest-qualification"
+              type="text"
+              className="field-input"
+              placeholder="e.g. Graduate, Class 12"
+              value={form.highestQualification || ""}
+              onChange={(e) => set("highestQualification", e.target.value)}
+            />
           </div>
 
           {/* Address */}
@@ -367,6 +475,74 @@ export default function StudentForm({ student, batches = [], courses = [], durat
               />
             </label>
             <ImageViewer url={photoPreview} label="Student Photo" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Parent / Guardian Details ─────────────────────────── */}
+      <div className="form-section">
+        <p className="form-section-title">👨‍👩‍👦 Parent / Guardian Details</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Father's Name */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-father-name">
+              Father's Name
+            </label>
+            <input
+              id="f-father-name"
+              type="text"
+              className="field-input"
+              placeholder="Father's full name"
+              value={form.fatherName || ""}
+              onChange={(e) => set("fatherName", e.target.value)}
+            />
+          </div>
+
+          {/* Mother's Name */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-mother-name">
+              Mother's Name
+            </label>
+            <input
+              id="f-mother-name"
+              type="text"
+              className="field-input"
+              placeholder="Mother's full name"
+              value={form.motherName || ""}
+              onChange={(e) => set("motherName", e.target.value)}
+            />
+          </div>
+
+          {/* Guardian's Contact Number */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-guardian-phone">
+              Guardian's Contact Number
+            </label>
+            <input
+              id="f-guardian-phone"
+              type="tel"
+              className={`field-input ${errors.guardianPhone ? "border-red-400 focus:ring-red-400" : ""}`}
+              placeholder="10-digit contact number"
+              value={form.guardianPhone || ""}
+              onChange={(e) => set("guardianPhone", e.target.value.replace(/\D/g, "").slice(0, 10))}
+              maxLength={10}
+            />
+            {errors.guardianPhone && <p className="field-error">{errors.guardianPhone}</p>}
+          </div>
+
+          {/* Relationship with Student */}
+          <div className="field-group">
+            <label className="field-label" htmlFor="f-guardian-rel">
+              Relationship with Student
+            </label>
+            <input
+              id="f-guardian-rel"
+              type="text"
+              className="field-input"
+              placeholder="e.g. Father, Mother, Brother, Uncle"
+              value={form.guardianRelationship || ""}
+              onChange={(e) => set("guardianRelationship", e.target.value)}
+            />
           </div>
         </div>
       </div>

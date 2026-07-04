@@ -117,3 +117,31 @@ export const getStudentsByBatch = async (batchId) => {
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 };
+
+// ─── Admin Resources (Links) ──────────────────────────────────────────────────
+export const getAllResources = async () => {
+  const q = query(collection(db, "resources"), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+};
+
+export const addResource = async (caption, url) => {
+  const ref = collection(db, "resources");
+  const docRef = await addDoc(ref, {
+    caption,
+    url,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+};
+
+export const updateResource = async (id, data) => {
+  await updateDoc(doc(db, "resources", id), {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+};
+
+export const deleteResource = async (id) => {
+  await deleteDoc(doc(db, "resources", id));
+};

@@ -5,6 +5,7 @@ import LoginPage from "./components/auth/LoginPage";
 import Dashboard from "./components/dashboard/Dashboard";
 import BatchManagement from "./components/batches/BatchManagement";
 import Navbar from "./components/shared/Navbar";
+import AdminResources from "./components/resources/AdminResources";
 
 // ─── Auth Context ─────────────────────────────────────────────────────────────
 export const AuthContext = createContext(null);
@@ -68,6 +69,16 @@ export default function App() {
             <ProtectedRoute>
               <AppLayout>
                 <BatchManagement />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/resources"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <AdminResources />
               </AppLayout>
             </ProtectedRoute>
           }
